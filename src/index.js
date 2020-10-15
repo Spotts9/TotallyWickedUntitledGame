@@ -4,6 +4,7 @@ import dudeImg from "./assets/images/dude.png";
 import mountains from "./assets/images/mountain-skyline.png";
 import skyClouds from "./assets/images/sky-clouds.jpg";
 
+
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
@@ -22,7 +23,7 @@ const config = {
     update: update
   }
 };
-
+var cursors;
 const game = new Phaser.Game(config);
 
 function preload() {
@@ -44,6 +45,8 @@ function create() {
 
     this.player.setCollideWorldBounds(true);
 
+    cursors = this.input.keyboard.createCursorKeys();
+
 this.anims.create({
     key: 'left',
     frames: this.anims.generateFrameNumbers("dude", {start:0, end:3}),
@@ -63,8 +66,24 @@ this.anims.create({
     frameRate: 10,
     repeat: -1
 });
+
 }
 
 function update(){
+    if (cursors.left.isDown){
+        this.player.setVelocityX(-160);
+        this.player.anims.play("left",true);
+    }
+    else if (cursors.right.isDown){
+        this.player.setVelocityX(160);
+        this.player.anims.play("right", true);
+    }
+    else {
+        this.player.setVelocityX(0);
+        this.player.anims.play("turn");
+    }
+    if ((cursors.up.isDown || cursors.space.isDown)  && this.player.body.onFloor()){
+        this.player.setVelocityY(-330);
+    }
 
 }
