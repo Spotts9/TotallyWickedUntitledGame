@@ -8,7 +8,7 @@ import skyClouds from "./assets/images/sky-clouds.jpg";
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
-  width: 800,
+  width: 2000,
   height: 600,
   physics: {
     default: 'arcade',
@@ -37,14 +37,17 @@ function preload() {
 
 function create() {
   //background
-  this.add.image(0, 0, 'mountains').setOrigin(0,0);
+    let bg=this.add.image(0, 0, 'mountains').setOrigin(0,0);
+    // Align.scaleToGameW(bg,2);
 
+    this.cameras.main.setBounds(0,0,5000,bg.displayHeight);
 
     this.player=this.physics.add.sprite(25,550,"dude");
     this.player.setBounce(0.2);
 
     this.player.setCollideWorldBounds(true);
-
+    this.cameras.main.startFollow(this.player);
+  
     cursors = this.input.keyboard.createCursorKeys();
 
 this.anims.create({
