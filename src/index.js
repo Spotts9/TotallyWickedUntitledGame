@@ -3,6 +3,11 @@ import logoImg from "./assets/logo.png";
 import dudeImg from "./assets/images/dude.png";
 import mountains from "./assets/images/mountain-skyline.png";
 import skyClouds from "./assets/images/sky-clouds.jpg";
+import coin from "./assets/images/coin.png";
+import diamond from "./assets/images/diamond.png";
+import spike from "./assets/images/spike.png";
+import platform500 from "./assets/images/platform-500w.png";
+import platform200 from "./assets/images/platform-200w.png";
 
 
 const config = {
@@ -30,14 +35,20 @@ function preload() {
   this.load.image("logo", logoImg);
   this.load.image("mountains", mountains);
   this.load.image("sky", skyClouds);
+  this.load.image("diamond", diamond);
+  this.load.image("spike", spike);
+  this.load.image("platform500", platform500);
+  this.load.image("platform200", platform200);
 
   this.load.spritesheet("dude", dudeImg, 
     {frameWidth: 32, frameHeight:48});
 }
-
+var platforms;
 function create() {
   //background
   this.add.image(0, 0, 'mountains').setOrigin(0,0);
+  platforms= this.physics.add.staticGroup();
+  platforms.create(400,570,'platform500').setScale(2).refreshBody();
 
 
     this.player=this.physics.add.sprite(25,550,"dude");
@@ -66,6 +77,19 @@ this.anims.create({
     frameRate: 10,
     repeat: -1
 });
+
+diamonds =this.physics.add.group({
+    key: 'diamond',
+    repeat: 10,
+    setXY: {x: 15, y: 0, stepX: 80}
+});
+diamonds.children.iterate(function (child){
+    child.setBounceY(Phaser.Math.FloatBetween(0.4,0.8));
+});
+
+this.physics.add.collider(player,platforms);
+this.physics.add.collider(diamonds,platforms);
+
 
 }
 
