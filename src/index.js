@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 import logoImg from "./assets/logo.png";
 import dudeImg from "./assets/images/dude.png";
+import batImg from "./assets/images/bat.png";
+import babyChickImg from "./assets/images/baby-chick.png";
+import catImg from "./assets/images/cat.png";
 import mountains from "./assets/images/mountain-skyline.png";
 import skyClouds from "./assets/images/sky-clouds.jpg";
 import coin from "./assets/images/coin.png";
@@ -47,7 +50,10 @@ function preload() {
   this.load.image("ground", groundImg);
 
   this.load.spritesheet("dude", dudeImg, { frameWidth: 32, frameHeight: 48 });
+  this.load.spritesheet("bat", batImg, { frameWidth: 50, frameHeight: 42 });
   this.load.spritesheet("coin", coin, { frameWidth: 32, frameHeight: 32 });
+  this.load.spritesheet("chick", chick, { frameWidth: 16, frameHeight: 18 });
+  this.load.spritesheet("cat", cat, { frameWidth: 32, frameHeight: 32 });
 }
 
 function create() {
@@ -68,6 +74,8 @@ function create() {
   platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
 
   this.cameras.main.setBounds(0, 0, 5000, 600);
+
+  this.physics.add.sprite(100, 300, "bat");
 
   player = this.physics.add.sprite(25, 400, "dude");
   player.setBounce(0.2);
