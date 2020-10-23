@@ -8,6 +8,7 @@ import diamond from "./assets/images/diamond.png";
 import spike from "./assets/images/spike.png";
 import platform500 from "./assets/images/platform-500w.png";
 import platform200 from "./assets/images/platform-200w.png";
+import groundImg from "./assets/images/platform-100w.png";
 
 const config = {
   type: Phaser.AUTO,
@@ -29,8 +30,9 @@ const config = {
 };
 var cursors;
 var player;
-var diamonds;
+var coins;
 var platforms;
+var bg;
 
 const game = new Phaser.Game(config);
 
@@ -42,27 +44,53 @@ function preload() {
   this.load.image("spike", spike);
   this.load.image("platform500", platform500);
   this.load.image("platform200", platform200);
+  this.load.image("ground", groundImg);
 
   this.load.spritesheet("dude", dudeImg, { frameWidth: 32, frameHeight: 48 });
+  this.load.spritesheet("coin", coin, { frameWidth: 32, frameHeight: 32 });
 }
 
 function create() {
   //background
-  let bg = this.add.image(0, 0, "mountains").setOrigin(0, 0);
-  platforms = this.physics.add.staticGroup();
-  platforms.create(400, 570, "platform500").setScale(5).refreshBody();
+  // bg = this.add.image(0, 0, "mountains").setOrigin(0, 0);
+  //the width and height value could be the screen width and height
+  //"background" is the name of your preloaded image
+  this.bg = this.add
+    .tileSprite(0, 0, 1000, 600, "mountains")
+    .setOrigin(0)
+    .setScrollFactor(0, 1); //this line keeps your background from scrolling outside of camera bounds
 
-  this.cameras.main.setBounds(0, 0, 5000, bg.displayHeight);
+  platforms = this.physics.add.staticGroup();
+  platforms.create(500, 575, "platform500").setScale(2).refreshBody();
+  platforms.create(1500, 575, "platform500").setScale(2).refreshBody();
+  platforms.create(2500, 575, "platform500").setScale(2).refreshBody();
+  platforms.create(3500, 575, "platform500").setScale(2).refreshBody();
+  platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
+
+  this.cameras.main.setBounds(0, 0, 5000, 600);
 
   player = this.physics.add.sprite(25, 400, "dude");
   player.setBounce(0.2);
 
   // player.setCollideWorldBounds(true);
-  
+
   this.physics.add.collider(player, platforms);
   this.cameras.main.startFollow(player);
 
   cursors = this.input.keyboard.createCursorKeys();
+
+  coins = this.physics.add.group({
+    key: "coin",
+    repeat: 4,
+    setXY: { x: 150, y: 300, stepX: 100 },
+  });
+
+  this.anims.create({
+    key: "spin",
+    frames: this.anims.generateFrameNumbers("coin", { start: 0, end: 5 }),
+    frameRate: 10,
+    repeat: -1,
+  });
 
   this.anims.create({
     key: "left",
@@ -84,19 +112,16 @@ function create() {
     repeat: -1,
   });
 
-  // this.diamonds = this.physics.add.group({
-  //   key: "diamond",
-  //   repeat: 10,
-  //   setXY: { x: 15, y: 0, stepX: 80 },
-  // });
-  // this.diamonds.children.iterate(function (child) {
-  //   child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-  // });
-
-  // this.physics.add.collider(diamonds, platforms);
+  this.physics.add.collider(coins, platforms);
 }
 
 function update() {
+  this.bg.setTilePosition(this.cameras.main.scrollX);
+
+  Phaser.Actions.Call(coins.getChildren(), (child) => {
+    child.anims.play("spin", true);
+  });
+
   if (cursors.left.isDown) {
     player.setVelocityX(-160);
     player.anims.play("left", true);
@@ -107,10 +132,7 @@ function update() {
     player.setVelocityX(0);
     player.anims.play("turn");
   }
-  if (
-    (cursors.up.isDown || cursors.space.isDown) &&
-    player.body.onFloor()
-  ) {
-    player.setVelocityY(-330);
+  if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
+    player.setVelocityY(-175);
   }
 }
