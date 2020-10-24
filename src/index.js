@@ -31,6 +31,8 @@ var cursors;
 var player;
 var diamonds;
 var platforms;
+var coins;
+var bg;
 
 const game = new Phaser.Game(config);
 
@@ -44,15 +46,20 @@ function preload() {
   this.load.image("platform200", platform200);
 
   this.load.spritesheet("dude", dudeImg, { frameWidth: 32, frameHeight: 48 });
+  this.load.spritesheet("coin",coin,{frameWidth:32,frameHeight:32});
 }
 
 function create() {
   //background
-  let bg = this.add.image(0, 0, "mountains").setOrigin(0, 0);
+  this.bg = this.add.tileSprite(0, 0, 1000,600,"mountains").setOrigin(0).setScrollFactor(0,1);
   platforms = this.physics.add.staticGroup();
-  platforms.create(400, 570, "platform500").setScale(5).refreshBody();
+  platforms.create(500, 575, "platform500").setScale(2).refreshBody();
+platforms.create(1500, 575, "platform500").setScale(2).refreshBody();
+platforms.create(2500, 575, "platform500").setScale(2).refreshBody();
+platforms.create(3500, 575, "platform500").setScale(2).refreshBody();
+platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
 
-  this.cameras.main.setBounds(0, 0, 5000, bg.displayHeight);
+  this.cameras.main.setBounds(0, 0, 5000, 600);
 
   player = this.physics.add.sprite(25, 400, "dude");
   player.setBounce(0.2);
@@ -63,6 +70,19 @@ function create() {
   this.cameras.main.startFollow(player);
 
   cursors = this.input.keyboard.createCursorKeys();
+
+  coins = this.physics.add.group({
+      key: "coin",
+      repeat: 10,
+      setXY: {x: 200, y: 350, stepX: 200},
+  });
+
+  this.anims.create({
+      key: "spin",
+      frames: this.anims.generateFrameNumbers("coin", { start: 0, end: 5 }),
+      frameRate: 10,
+      repeat: -1,
+  });
 
   this.anims.create({
     key: "left",
@@ -93,10 +113,15 @@ function create() {
   //   child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
   // });
 
-  // this.physics.add.collider(diamonds, platforms);
+  this.physics.add.collider(coins, platforms);
 }
 
 function update() {
+    this.bg.setTilePosition(this.cameras.main.scrollX);
+    Phaser.Actions.Call(coins.getChildren(), (child) => {
+        child.anims.play("spin",true);
+    });
+
   if (cursors.left.isDown) {
     player.setVelocityX(-160);
     player.anims.play("left", true);
