@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import logoImg from "./assets/logo.png";
 import dudeImg from "./assets/images/dude.png";
+import batImg from "./assets/images/bat.png";
+import spoopy from "./assets/images/background.png";
 import mountains from "./assets/images/mountain-skyline.png";
 import skyClouds from "./assets/images/sky-clouds.jpg";
 import coin from "./assets/images/coin.png";
@@ -17,7 +19,7 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 300 },
+      gravity: { y: 200 },
       debug: false,
     },
   },
@@ -39,6 +41,7 @@ const game = new Phaser.Game(config);
 function preload() {
   this.load.image("logo", logoImg);
   this.load.image("mountains", mountains);
+  this.load.image("spoopy", spoopy);
   this.load.image("sky", skyClouds);
   this.load.image("diamond", diamond);
   this.load.image("spike", spike);
@@ -46,12 +49,13 @@ function preload() {
   this.load.image("platform200", platform200);
 
   this.load.spritesheet("dude", dudeImg, { frameWidth: 32, frameHeight: 48 });
+  this.load.spritesheet("bat", batImg, { frameWidth: 50, frameHeight: 42 });
   this.load.spritesheet("coin",coin,{frameWidth:32,frameHeight:32});
 }
 
 function create() {
   //background
-  this.bg = this.add.tileSprite(0, 0, 1000,600,"mountains").setOrigin(0).setScrollFactor(0,1);
+  this.bg = this.add.tileSprite(0, 0, 1000,600,"spoopy").setOrigin(0).setScrollFactor(0,1);
   platforms = this.physics.add.staticGroup();
   platforms.create(500, 575, "platform500").setScale(2).refreshBody();
 platforms.create(1500, 575, "platform500").setScale(2).refreshBody();
@@ -61,7 +65,7 @@ platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
 
   this.cameras.main.setBounds(0, 0, 5000, 600);
 
-  player = this.physics.add.sprite(25, 400, "dude");
+  player = this.physics.add.sprite(25, 400, "bat");
   player.setBounce(0.2);
 
   // player.setCollideWorldBounds(true);
@@ -86,7 +90,7 @@ platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
 
   this.anims.create({
     key: "left",
-    frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+    frames: this.anims.generateFrameNumbers("bat", { start: 0, end: 1 }),
     frameRate: 10,
     repeat: -1,
   });
@@ -99,7 +103,7 @@ platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
 
   this.anims.create({
     key: "right",
-    frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+    frames: this.anims.generateFrameNumbers("bat", { start: 2, end: 3 }),
     frameRate: 10,
     repeat: -1,
   });
@@ -125,17 +129,18 @@ function update() {
   if (cursors.left.isDown) {
     player.setVelocityX(-160);
     player.anims.play("left", true);
-  } else if (cursors.right.isDown) {
+  } else if(cursors.right.isDown) {
     player.setVelocityX(160);
     player.anims.play("right", true);
-  } else {
-    player.setVelocityX(0);
-    player.anims.play("turn");
   }
+//   } else {
+//     player.setVelocityX(0);
+//     player.anims.play("turn");
+//   }
   if (
     (cursors.up.isDown || cursors.space.isDown) &&
     player.body.onFloor()
   ) {
-    player.setVelocityY(-330);
+    player.setVelocityY(-175);
   }
 }
