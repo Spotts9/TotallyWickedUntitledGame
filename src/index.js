@@ -37,6 +37,8 @@ var coins;
 var bg;
 
 const game = new Phaser.Game(config);
+var score=0;
+var scoreText;
 
 function preload() {
   this.load.image("logo", logoImg);
@@ -116,12 +118,22 @@ platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
   // this.diamonds.children.iterate(function (child) {
   //   child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
   // });
-
+scoreText = this.add.text(16, 16, "Score: 0", {
+    fontSize: "32px",
+    fill: "#FF0000"
+});
   this.physics.add.collider(coins, platforms);
+  this.physics.add.overlap(player,coins,collectcoin,null,this);
 }
 
+function collectcoin(player,coin){
+    coin.disableBody(true,true);
+    score +=10;
+    scoreText.setText("Score: " + score);
+}
 function update() {
     this.bg.setTilePosition(this.cameras.main.scrollX);
+    scoreText.x=(this.cameras.main.scrollX);
     Phaser.Actions.Call(coins.getChildren(), (child) => {
         child.anims.play("spin",true);
     });
