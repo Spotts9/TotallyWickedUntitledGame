@@ -8,6 +8,7 @@ import skyClouds from "./assets/images/sky-clouds.jpg";
 import coin from "./assets/images/coin.png";
 import diamond from "./assets/images/diamond.png";
 import spike from "./assets/images/spike.png";
+import pumpkin from "./assets/images/pumpkin.png";
 import platform500 from "./assets/images/platform-500w.png";
 import platform200 from "./assets/images/platform-200w.png";
 
@@ -34,7 +35,9 @@ var player;
 var diamonds;
 var platforms;
 var coins;
+var pumpkins;
 var bg;
+var gameOver= false;
 
 const game = new Phaser.Game(config);
 var score=0;
@@ -47,6 +50,7 @@ function preload() {
   this.load.image("sky", skyClouds);
   this.load.image("diamond", diamond);
   this.load.image("spike", spike);
+  this.load.image("pumpkin",pumpkin);
   this.load.image("platform500", platform500);
   this.load.image("platform200", platform200);
 
@@ -81,6 +85,13 @@ platforms.create(4500, 575, "platform500").setScale(2).refreshBody();
       key: "coin",
       repeat: 10,
       setXY: {x: 200, y: 350, stepX: 200},
+  });
+
+
+  pumpkins = this.physics.add.group({
+      key: "pumpkin",
+      repeat: 6,
+      setXY: {x: (Phaser.Math.Between(200, 400)) , y: 300, stepX: 400},
   });
 
   this.anims.create({
@@ -124,8 +135,18 @@ scoreText = this.add.text(16, 16, "Score: 0", {
 });
   this.physics.add.collider(coins, platforms);
   this.physics.add.overlap(player,coins,collectcoin,null,this);
+
+    //prevents pumpkins from falling
+    this.physics.add.collider(pumpkins, platforms);
+
+    this.physics.add.collider(player, pumpkins, hitPumpkin, null, this);
 }
 
+function hitPumpkin (player, pumpkin){
+    this.physics.pause();
+    player.setTint(0xff0000);
+    gameOver= true;
+}
 function collectcoin(player,coin){
     coin.disableBody(true,true);
     score +=10;
