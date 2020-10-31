@@ -42,6 +42,7 @@ var gameOver= false;
 const game = new Phaser.Game(config);
 var score=0;
 var scoreText;
+var gameOverText = "GAME OVER";
 
 function preload() {
   this.load.image("logo", logoImg);
@@ -146,6 +147,29 @@ function hitPumpkin (player, pumpkin){
     this.physics.pause();
     player.setTint(0xff0000);
     gameOver= true;
+
+    this.add.text(this.cameras.main.scrollX + 225, 225, gameOverText, {
+        fontSize: "64px",
+        fill: "#FF0000"
+    });
+
+    //shake the camera
+    this.cameras.main.shake(500);
+
+    //fade camera
+    this.time.delayedCall(2000, function(){
+        this.cameras.main.fade(1000);
+    },[], this);
+
+    //restart game
+    this.time.delayedCall(
+        3000,
+        function() {
+            this.scene.restart();
+        },
+        [],
+        this
+    );
 }
 function collectcoin(player,coin){
     coin.disableBody(true,true);
